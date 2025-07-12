@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Akash Thakur - Portfolio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --editor-bg: #1e1e1e;
+            --sidebar-bg: #252526;
+            --activity-bar-bg: #333333;
+            --status-bar-bg: #007acc;
+            --text-color: #d4d4d4;
+            --inactive-text: #8a8a8a;
+            --accent-color: #007acc;
+            --string-color: #ce9178;
+            --keyword-color: #569cd6;
+            --comment-color: #6a9955;
+            --number-color: #b5cea8;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Fira Code', monospace;
+            margin: 0;
+            padding: 0;
+            background-color: var(--editor-bg);
+            color: var(--text-color);
+            overflow: hidden;
+        }
+
+        .vscode-container {
+            display: flex;
+            height: 100vh;
+        }
+
+        /* Activity Bar */
+        .activity-bar {
+            background-color: var(--activity-bar-bg);
+            padding: 15px 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 50px;
+        }
+        .activity-bar .icon {
+            font-size: 24px;
+            cursor: pointer;
+            margin-bottom: 20px;
+            color: var(--inactive-text);
+        }
+        .activity-bar .icon.active {
+            color: var(--text-color);
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: var(--sidebar-bg);
+            padding: 10px;
+            transition: width 0.3s ease;
+        }
+        .sidebar-header {
+            font-size: 12px;
+            color: var(--inactive-text);
+            text-transform: uppercase;
+            margin-bottom: 15px;
+            padding: 0 5px;
+        }
+        .file-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .file-item {
+            padding: 8px 10px;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+            font-size: 14px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+        }
+        .file-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        .file-item.active {
+            background-color: rgba(255, 255, 255, 0.15);
+        }
+        .file-item a {
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            width: 100%;
+        }
+        .file-item .icon {
+            margin-right: 8px;
+            color: var(--accent-color);
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .editor-tabs {
+            display: flex;
+            background-color: #2d2d2d;
+            border-bottom: 1px solid #252526;
+        }
+        .tab {
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: var(--sidebar-bg);
+            border-right: 1px solid #252526;
+            cursor: pointer;
+            color: var(--inactive-text);
+        }
+        .tab.active {
+            background-color: var(--editor-bg);
+            color: var(--text-color);
+        }
+
+        .editor-body {
+            flex-grow: 1;
+            padding: 20px;
+            overflow-y: auto;
+            font-size: 15px;
+            line-height: 1.8;
+        }
+        .content-section {
+            display: none;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .line-number {
+            color: var(--inactive-text);
+            padding-right: 15px;
+            user-select: none;
+        }
+        pre {
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin: 0;
+        }
+        .string { color: var(--string-color); }
+        .keyword { color: var(--keyword-color); }
+        .comment { color: var(--comment-color); }
+        .number { color: var(--number-color); }
+        .property { color: #9cdcfe; }
+        .value { color: #ce9178; }
+        .bracket { color: #d4d4d4; }
+        .tag { color: #4ec9b0; }
+
+        /* Status Bar */
+        .status-bar {
+            background-color: var(--status-bar-bg);
+            color: white;
+            padding: 5px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+        .status-bar a {
+            color: white;
+            text-decoration: none;
+            margin-left: 15px;
+        }
+        .status-bar a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="vscode-container">
+        <!-- Activity Bar -->
+        <div class="activity-bar">
+            <div class="icon active" title="Explorer">📄</div>
+            <div class="icon" title="Search">🔍</div>
+            <div class="icon" title="Git">🌿</div>
+            <div class="icon" title="Extensions">🧩</div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">Explorer</div>
+            <ul class="file-list">
+                <li class="file-item active" onclick="showSection('about', 'about.md')">
+                    <span class="icon">📝</span>about.md
+                </li>
+                <li class="file-item" onclick="showSection('experience', 'experience.json')">
+                    <span class="icon">💼</span>experience.json
+                </li>
+                <li class="file-item" onclick="showSection('skills', 'skills.ts')">
+                    <span class="icon">💻</span>skills.ts
+                </li>
+                <li class="file-item" onclick="showSection('projects', 'projects.js')">
+                    <span class="icon">🚀</span>projects.js
+                </li>
+                <li class="file-item" onclick="showSection('contact', 'contact.html')">
+                    <span class="icon">📧</span>contact.html
+                </li>
+                <li class="file-item">
+                    <a href="AkashThakurResume.pdf" download>
+                        <span class="icon">📄</span>resume.pdf
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="editor-tabs">
+                <div id="active-tab" class="tab active">about.md</div>
+            </div>
+            <div class="editor-body">
+                <!-- About Section -->
+                <div id="about-content" class="content-section active">
+                    <pre><span class="line-number">1 </span><span class="keyword"># Akash Thakur</span>
+<span class="line-number">2 </span>
+<span class="line-number">3 </span><span class="comment">## Senior Product Engineer | .NET Full Stack | Azure Specialist</span>
+<span class="line-number">4 </span>
+<span class="line-number">5 </span>As a seasoned developer with 8+ years of experience, I have a proven track record 
+<span class="line-number">6 </span>of architecting and developing enterprise-grade .NET Core applications, improving 
+<span class="line-number">7 </span>scalability, and delivering cost-efficiency by leveraging Azure services. I am passionate 
+<span class="line-number">8 </span>about mentoring junior engineers and fostering a culture of technical excellence.
+</pre>
+                </div>
+
+                <!-- Experience Section -->
+                <div id="experience-content" class="content-section">
+<pre><span class="line-number">1 </span><span class="bracket">[</span>
+<span class="line-number">2 </span>  <span class="bracket">{</span>
+<span class="line-number">3 </span>    <span class="property">"company"</span>: <span class="string">"LTIMindtree"</span>,
+<span class="line-number">4 </span>    <span class="property">"role"</span>: <span class="string">"Senior Product Engineer"</span>,
+<span class="line-number">5 </span>    <span class="property">"duration"</span>: <span class="string">"Dec 2021 - Present"</span>,
+<span class="line-number">6 </span>    <span class="property">"highlights"</span>: <span class="bracket">[</span> <span class="string">"Architected .NET Core apps on Azure", "Reduced infra costs by 30%"</span> <span class="bracket">]</span>
+<span class="line-number">7 </span>  <span class="bracket">}</span>,
+<span class="line-number">8 </span>  <span class="bracket">{</span>
+<span class="line-number">9 </span>    <span class="property">"company"</span>: <span class="string">"Icertis"</span>,
+<span class="line-number">10</span>    <span class="property">"role"</span>: <span class="string">"Software Engineer"</span>,
+<span class="line-number">11</span>    <span class="property">"duration"</span>: <span class="string">"Apr 2020 - Nov 2021"</span>,
+<span class="line-number">12</span>    <span class="property">"highlights"</span>: <span class="bracket">[</span> <span class="string">"Developed for ICI platform", "Boosted reliability by 30%"</span> <span class="bracket">]</span>
+<span class="line-number">13</span>  <span class="bracket">}</span>,
+<span class="line-number">14</span>  <span class="bracket">{</span>
+<span class="line-number">15</span>    <span class="property">"company"</span>: <span class="string">"Harbinger Systems"</span>,
+<span class="line-number">16</span>    <span class="property">"role"</span>: <span class="string">"Software Engineer"</span>,
+<span class="line-number">17</span>    <span class="property">"duration"</span>: <span class="string">"Mar 2017 - Apr 2020"</span>,
+<span class="line-number">18</span>    <span class="property">"highlights"</span>: <span class="bracket">[</span> <span class="string">"Delivered full-stack solutions", "Elevated user satisfaction by 15%"</span> <span class="bracket">]</span>
+<span class="line-number">19</span>  <span class="bracket">}</span>
+<span class="line-number">20</span><span class="bracket">]</span></pre>
+                </div>
+                
+                <!-- Skills Section -->
+                <div id="skills-content" class="content-section">
+<pre><span class="line-number">1 </span><span class="keyword">export const</span> <span class="property">backendSkills</span>: <span class="tag">string</span>[] = [
+<span class="line-number">2 </span>  <span class="string">'C#.NET'</span>, <span class="string">'.NET Core'</span>, <span class="string">'ASP.NET MVC'</span>,
+<span class="line-number">3 </span>  <span class="string">'Web API'</span>, <span class="string">'EF Core'</span>, <span class="string">'Microservices'</span>,
+<span class="line-number">4 </span>];
+<span class="line-number">5 </span>
+<span class="line-number">6 </span><span class="keyword">export const</span> <span class="property">frontendSkills</span>: <span class="tag">string</span>[] = [
+<span class="line-number">7 </span>  <span class="string">'Angular'</span>, <span class="string">'React'</span>, <span class="string">'JavaScript'</span>, <span class="string">'HTML/CSS'</span>,
+<span class="line-number">8 </span>];
+<span class="line-number">9 </span>
+<span class="line-number">10</span><span class="keyword">export const</span> <span class="property">cloudAndDevOps</span>: <span class="tag">string</span>[] = [
+<span class="line-number">11</span>  <span class="string">'Azure'</span>, <span class="string">'Azure Functions'</span>, <span class="string">'Azure SQL'</span>,
+<span class="line-number">12</span>  <span class="string">'NGINX'</span>, <span class="string">'Elasticsearch'</span>, <span class="string">'Signal-R'</span>,
+<span class="line-number">13</span>];</pre>
+                </div>
+
+                <!-- Projects Section -->
+                <div id="projects-content" class="content-section">
+<pre><span class="line-number">1 </span><span class="keyword">function</span> <span class="property">showcaseProjects</span>() {
+<span class="line-number">2 </span>  <span class="keyword">return</span> [
+<span class="line-number">3 </span>    { <span class="property">name</span>: <span class="string">'EY DCMS'</span>, <span class="property">desc</span>: <span class="string">'Enterprise document and contract management.'</span> },
+<span class="line-number">4 </span>    { <span class="property">name</span>: <span class="string">'EY Virtual'</span>, <span class="property">desc</span>: <span class="string">'Legal and compliance platform using micro-frontends.'</span> },
+<span class="line-number">5 </span>    { <span class="property">name</span>: <span class="string">'Icertis Contract Mgmt'</span>, <span class="property">desc</span>: <span class="string">'Cloud-based contract efficiency solution.'</span> },
+<span class="line-number">6 </span>    { <span class="property">name</span>: <span class="string">'CareerBuilder DCMS'</span>, <span class="property">desc</span>: <span class="string">'Document system improving processing by 25%.'</span> }
+<span class="line-number">7 </span>  ];
+<span class="line-number">8 </span>}
+</pre>
+                </div>
+
+                <!-- Contact Section -->
+                <div id="contact-content" class="content-section">
+<pre><span class="line-number">1 </span><span class="comment">&lt;!-- Get in touch --&gt;</span>
+<span class="line-number">2 </span>&lt;<span class="tag">div</span> <span class="property">class</span>=<span class="string">"contact-info"</span>&gt;
+<span class="line-number">3 </span>  &lt;<span class="tag">p</span>&gt;Email: &lt;<span class="tag">a</span> <span class="property">href</span>=<span class="string">"mailto:aakash_thakur@outlook.com"</span>&gt;aakash_thakur@outlook.com&lt;/<span class="tag">a</span>&gt;&lt;/<span class="tag">p</span>&gt;
+<span class="line-number">4 </span>  &lt;<span class="tag">p</span>&gt;LinkedIn: &lt;<span class="tag">a</span> <span class="property">href</span>=<span class="string">"https://linkedin.com/in/aakash-thakur"</span> <span class="property">target</span>=<span class="string">"_blank"</span>&gt;linkedin.com/in/aakash-thakur&lt;/<span class="tag">a</span>&gt;&lt;/<span class="tag">p</span>&gt;
+<span class="line-number">5 </span>&lt;/<span class="tag">div</span>&gt;</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Bar -->
+    <div class="status-bar">
+        <div>&nbsp;✓ Main</div>
+        <div>
+            <span>Akash Thakur</span>
+            <a href="https://www.linkedin.com/in/aakash-thakur/" target="_blank">LinkedIn</a>
+        </div>
+    </div>
+
+    <script>
+        function showSection(sectionId, fileName) {
+            // Remove active class from all file items
+            const fileItems = document.querySelectorAll('.file-item');
+            fileItems.forEach(item => item.classList.remove('active'));
+            
+            // Add active class to clicked item
+            event.target.closest('.file-item').classList.add('active');
+            
+            // Update active tab
+            document.getElementById('active-tab').textContent = fileName;
+            
+            // Hide all content sections
+            const contentSections = document.querySelectorAll('.content-section');
+            contentSections.forEach(section => section.classList.remove('active'));
+            
+            // Show selected content section
+            const targetSection = document.getElementById(sectionId + '-content');
+            if (targetSection) {
+                targetSection.classList.add('active');
+            }
+        }
+    </script>
+</body>
+</html>
